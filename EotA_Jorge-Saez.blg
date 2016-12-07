@@ -1,0 +1,12 @@
+This is BibTeX, Version 0.99dThe top-level auxiliary file: EotA_Jorge-Saez.aux
+The style file: plainnat.bst
+Database file #1: egbib.bib
+Warning--entry type for "Thesis:16" isn't style-file defined
+--line 81 of file egbib.bib
+A bad cross reference---entry "Stauffer:99"
+refers to entry "conf/cvpr/1999", which doesn't exist
+Warning--I didn't find a database entry for "conf/cvpr/1999"
+Warning--empty year in Thesis:16
+Warning--empty booktitle in models
+Warning--empty booktitle in CNNliu
+(There was 1 error message)

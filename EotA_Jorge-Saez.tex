@@ -1,0 +1,199 @@
+\documentclass{bmvc2k}
+
+%% Enter your paper number here for the review copy
+% \bmvcreviewcopy{??}
+
+\title{Estado del Arte: Monitorización de trafico}
+
+% Enter the paper's authors in order
+% \addauthor{Name}{email/homepage}{INSTITUTION_CODE}
+\addauthor{Jorge Sáez Tejedor}{j.saez.2016@alumnos.urjc.es}{1}
+\addauthor{Jose Maria Cañas}{josemaria.plaza@urjc.es}{2}
+
+% Enter the institutions
+% \addinstitution{Name\\Address}
+\addinstitution{
+ Máster Oficial de Visión Artificial\\
+ Universidad Rey Juan Carlos\\
+ Campus de Mostoles, España
+}
+\addinstitution{
+	Tutor del trabajo\\
+	Universidad Rey Juan Carlos\\
+	Campus de Fuenlabrada, España
+}
+
+\renewcommand*\contentsname{Contenidos}
+
+\runninghead{}{}
+
+% Any macro definitions you would like to include
+% These are not defined in the style file, because they don't begin
+% with \bmva, so they might conflict with the user's own macros.
+% The \bmvaOneDot macro adds a full stop unless there is one in the
+% text already.
+\def\eg{\emph{e.g}\bmvaOneDot}
+\def\Eg{\emph{E.g}\bmvaOneDot}
+\def\etal{\emph{et al}\bmvaOneDot}
+
+%-------------------------------------------------------------------------
+% Document starts here
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+En este documento se describirá el estado del arte actual de la monitorización de trafico empleando cámaras y algoritmos de visión artificial. Se hará un breve repaso de los diferentes problemas que plantea esta tarea y las soluciones ofrecidas por la comunidad científica.
+
+\end{abstract}
+
+\tableofcontents
+%-------------------------------------------------------------------------
+\section{Introducción}
+\label{sec:intro}
+
+La monitorización del trafico en carreteras y zonas urbanas mediante el uso de cámaras es de gran ayuda para las instituciones publicas. Estos sistemas son especialmente útiles en áreas metropolitanas, donde debido a la gran afluencia de trafico, es necesario conocimiento en tiempo real para su correcta distribución. Los sistemas de este tipo se llevan implantando desde principios de los 90, con un solo dispositivo se es capaz de obtener gran cantidad de información de la carretera, como su ocupación, tipo de vehículos que circulan, velocidades, etc. 
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.7\linewidth]{images/Intro}
+	\caption{Ejemplo de monitorización de trafico en una rotonda. Fuente:\cite{Thesis:16}}
+	\label{fig:intro}
+\end{figure}
+
+En los años recientes se ha incrementado el interés por el análisis automático del trafico urbano, en primer lugar se pretende reducir el numero de accidentes en las carreteras y el tiempo transcurrido en prestar la atención necesaria, el concepto de Smart City va cobrando cada vez más importancia, lo que se pretende es obtener gran cantidad de datos de la situación actual de una ciudad para poder actuar en concordancia de una manera rápida y eficaz, por ello uno de los primeros objetivos de un sistema de monitorización de trafico deberá ser la obtención de datos en tiempo real. Otro factor que ha promovido la implantación de estos sistemas es que, en la mayoría de los casos, ya existía una infraestructura previa de cámaras de circuito cerrado, lo que reduce el tiempo y el coste de instalación de estos sistemas.
+
+Por lo general la monitorización de trafico presenta diversos problemas que se deberán abordar, en primer lugar las cámaras empleadas para la vigilancia de trafico no suelen tener altas resolución, lo que dificulta la tarea de detección y clasificación, este tipo de sistemas suele tener ademas restricciones de tiempo real, lo que reduce el numero y la complejidad de algoritmos que se podrán emplear. Por otro lado tenemos el problema de la detección de vehículos, por lo general en el caso que nos ocupa las escenas están más restringidas y el numero de tipos de objeto a detectar en más pequeño que en otros escenarios, más aun en escenas de autopista donde no se permite el paso de peatones. En cuanto al seguimiento de vehículos se deberá lidiar con problemas de cambios bruscos de iluminación, efectos adversos del clima y oclusiones, entre otros. 
+
+\section{Detección de fondo}
+
+El problema de la eliminación del fondo de la imagen será el primer problema que cualquier algoritmo de monitorización de trafico tendrá que abordar. Este ha sido ampliamente tratado desde la década de los 90, principalmente en aplicaciones de videovigilancia. Existen gran cantidad de algoritmos que realizan esta tarea, la mayoría de ellos siguen el mismo esquema:
+
+\begin{itemize}
+	\item \textbf{Inicialización del fondo:} La primera tarea consistirá en construir un modelo del fondo en función de una serie de imágenes tomadas de la escena.
+	\item \textbf{Detección del primer plano:} En las siguientes muestras se realiza una comparación entre la imagen actual y el modelo del fondo, con lo que se obtiene una muestra del primer plano.
+	\item \textbf{Actualización del fondo:} Durante el proceso de detección las imágenes se analizan con el objetivo de actualizar el modelo del fondo, así pues, un objeto nuevo en la escena que permanezca estático durante mucho tiempo pasará a ser considerado parte del fondo.
+\end{itemize}
+
+\subsection*{Métodos básicos}
+
+La manera más sencilla para crear un modelo del fondo, es tomar una imagen de la escena vacía y posteriormente calcular la diferencia absoluta de las imágenes a tratar (fig: \ref{fig:simple}), el problema se presenta cuando existen cambios de iluminación o ligeros movimientos del fondo. Una segunda aproximación seria calcular la diferencia con la imagen anterior, de esta manera el algoritmo es más resistente a cambios de iluminación pero dejará de reconocer cualquier objeto que se detenga durante un cierto tiempo. Una manera de resolver este problema \cite{A.Lai:1998} consiste en crear el modelo del fondo como una media aritmética de varias imágenes y posteriormente mantenerlo con un factor de aprendizaje, de esta manera se aumenta la resistencia frente a cambios en la escena, para evitar que el algoritmo incorpore pixeles del primer plano al modelo del fondo al cabo del tiempo se presenta una restricción en base al movimiento.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.7\linewidth]{images/simple}
+	\caption{Aplicación simple de resta de fondo, se puede ver la imagen tomada tomada por la cámara, el objeto detectado y la imagen inicial de la escena vacía.}
+	\label{fig:simple}
+\end{figure}
+
+\subsection*{Modelos estadísticos}
+
+Uno de los métodos más populares se basa en crear un modelo probabilistico del fondo \cite{Stauffer:99}. En el algoritmo, la distribución de cada pixel se representa como una suma de distribuciones Gaussianas ponderadas (GMM). Estas distribuciones se van actualizando con nuevos valores a media que se van tomando imágenes. Para considerar un pixel como parte del fondo se emplea la formula:
+
+\begin{equation}
+P(Z_t |m_t)=\sum_{n=1}^{N}\frac{\alpha_n}{(2\pi)^{d/2} |\Sigma_n|^{1/2}}e^{-\frac{1}{2}(Z_t-\mu_n)^T \Sigma^-1(Z_t-\mu_n)}
+\end{equation}
+
+donde $d$ es la dimensión de la imagen $z_t$. Cada Gaussiana $\mu_n$ tiene un peso asociado $\alpha_n$ y considerando los canales (R G B) independientes, tenemos que:
+
+\begin{equation}
+\Sigma_n=\left[ \begin{matrix}
+_1\sigma_n^2 & 0 			& 0 \\
+0 			 & _2\sigma_n^2 & 0 \\
+0 			 & 0 			& _3\sigma_n^2
+\end{matrix} \right]
+\end{equation}
+
+Este algoritmo obtiene buenos resultados en exteriores aunque aun tiene problemas con cambios bruscos de iluminación y sombras. Se han presentado varias modificaciones de este algoritmo como \cite{yao:07} donde los autores lo integran con diversos métodos de localización de texturas (LBP) y colores. 
+
+\subsection*{Redes neuronales}
+
+Diversos estudios sobre el empleo de las redes neuronales (CNN) muestran la gran capacidad que están tienen para detectar y clasificar objetos. Por lo general presentan una precisión superior al 90\%, en algunos casos \cite{Dong:14} llegando incluso al 95,7\% en condiciones favorables de iluminación.
+
+\begin{figure}[hb]
+	\centering
+	\includegraphics[width=0.5\linewidth]{images/CNN}
+	\caption{Arquitectura tipica de una red neuronal de convolución. Se muestran las capas de convolución y pooling. Fuente: \cite{Bautista:16}}
+	\label{fig:cnn}
+\end{figure}
+
+La arquitectura típica de una red neuronal se puede ver en la fig: \ref{fig:cnn}, se componen de capas de convolución y pooling, seguidas de una o varias capas inter-conectadas, cada entrada y salida de una capa se corresponde con una serie de mapas de características. 
+
+En \cite{Bautista:16} los autores emplean una CNN creada sobre sobre el \textit{framework} Caffe, en primer lugar realizan una serie de operaciones de pre-proceso sobre la imagen para evitar los efectos adversos del clima, brillos y sombras pronunciadas. A continuación segmentan la imagen en pequeñas porciones con el objetivo de reducir los vehículos que se escapan a la detección. La detección y clasificación de los vehículos se realiza en el mismo proceso, en este caso los autores definen 7 clases. El tiempo medio de computo de cada fotograma es de 51,28 ms en una CPU de 2GHz, esto lo sitúa en el limite para una aplicación de tiempo real.
+
+\section{Seguimiento de vehículos}
+
+Existen en la literatura diversas maneras de realizar el seguimiento de vehículos. Teniendo en cuenta la manera que tienen los algoritmos de representar el objeto podemos diferenciar 4 tipos fundamentales \cite{dato:16}. 
+
+\subsection*{Basado en regiones}
+
+Este tipo de algoritmos se apoyan en detectar las variaciones que sufren las regiones de la imagen. Una determinada región que se haya clasificado como vehículos se sigue empleando características geométricas, de apariencia y basadas en movimiento. Este tipo de algoritmos son eficientes computacionalmente pero presentan problemas en condiciones de trafico denso. 
+
+\subsection*{Basado en contornos}
+
+En este caso los vehículos se caracterizan simplemente por su contorno exterior, estos se actualizan dinámicamente a medida que se van capturando nuevos fotogramas. Estos algoritmos proporcionan una mayor eficiencia que los basados en regiones, sin embargo, presentan grandes problemas en cuanto a oclusiones y extracción de sombras, ademas resulta complicado aislar el contorno de dos vehículos que se hayan acercado demasiado en algun momento.
+
+\subsection*{Basado en características}
+
+Los algoritmos de este grupo se basan en el hecho de poder representar cada vehículo con una serie de características simples, como lineas, esquinas y formas básicas Una vez localizadas, se van rastreando en el resto de fotogramas. El resultado será bueno siempre y cuando las características elegidas sean lo suficientemente robustas y distinguibles a pesar de la distancia o la oclusión. Entre las más empleadas se encuentran SIFT y HOG. Estos algoritmos son capaces de adaptarse de manera rápida permitiendo un procesamiento rápido y el seguimiento de múltiples vehículos incluso en condiciones de trafico denso.
+
+\subsection*{Basado en modelos}
+
+Otro método de seguimiento se basa en hacer coincidir un modelo 3D del objeto a seguir con los presentes en la escena, fig: \ref{fig:3dmodel}. Esto proporciona una estimación de la orientación y trayectoria del objeto. Por lo general se añaden nuevos datos al modelo una vez se ha realizado la inicialización. 
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.6\linewidth]{images/3dmodel}
+	\caption{Ejemplo de seguimiento con modelos 3D. Fuente: \protect{\url{https://sites.google.com/site/kuanhuilee0201/research}}}
+	\label{fig:3dmodel}
+\end{figure}
+
+
+\section{Clasificación de vehículos}
+
+Una vez localizados los vehículos dentro de la escena resulta de gran interés clasificarlos en grupos y saber así que tipo de ocupación tiene la vía que están monitorizando o a que horas existe la mayor afluencia de camiones, por ejemplo. Debido a la enorme variedad de vehículos disponibles en el mercado es complicado encontrar una serie de características infalibles para realizar una clasificación universal. Por lo general los trabajos estudiados definen entre 3 y 7 clases de vehículos entre los que diferenciar.
+
+\subsection*{Características}
+
+Este tipo de técnicas se apoyan en diversas características físicas para diferenciar diferentes clases de vehículos Pueden ser geométricas, como la longitud, anchura, altura y combinaciones de ambas, como en \cite{virtualdetection}, en algunos casos es necesario disponer de una cámara previamente calibrada, por lo general este tipo de algoritmos se ejecutan de manera rápida, pero presentan problemas a la hora de diferenciar entre más de tres o cuatro clases. 
+
+\subsection*{Modelos}
+
+Este tipo de clasificadores se basan en sets de modelos 3D de vehículos, cada uno proporciona una descripción detallada de un tipo. El mayor problema reside en la necesidad de generalización de la apariencia dentro de una misma clase. 
+
+El objetivo es comparar cada uno de los modelos con los objetos encontrados en la escena realizando una proyección al plano de la calzada. Esta tarea resulta imposible con una restricción de tiempo real, así pues en \cite{models} realizan un pre-computo \textit{offline}, para crear un mapa de posiciones en la escena. Cuando se quiere realizar una consulta, se accede al mapa indexado para generar un lista de posibles candidatos organizados en función de su solapamiento con el modelo. Si el resultado del análisis es demasiado bajo se realiza un análisis más exhaustivo para determinar si corresponde a dos o más vehículos parcialmente ocluidos.  
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.5\linewidth]{images/Models}
+	\caption{Diferentes modelos 3D para la clasificación de vehículos}
+	\label{fig:models}
+\end{figure}
+
+\subsection*{Redes neuronales}
+
+Otra de las técnicas empleadas actualmente para la clasificación de vehículos se basa en el empleo de redes neuronales. En \cite{CNNdetect:16} podemos ver como empleando una red de aprendizaje profundo, los autores obtienen buenos resultados diferenciando entre 4 clases de vehículos Hacen uso de una red de 5 capas, dos de convolución, 2 de interconexión y una de clasificación. A pesar del esfuerzo por optimizar la ejecución del algoritmo empleando técnicas de grafos, el tiempo necesario para realizar una clasificación no lo hace apto para una aplicación en tiempo real. 
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.6\linewidth]{images/grafo}
+	\caption{Grafo empleado en la optimización de una red neuronal.}
+	\label{fig:grafo}
+\end{figure}
+
+Otro ejemplo lo podemos ver en \cite{CNNliu} donde empleando una red más sencilla con un tratamiento previo de la imagen consiguen un tiempo mínimo de ejecución de 1,7s realizando la clasificación en sobre imágenes de 32x32px, este tiempo podría verse reducido en caso de emplear computo paralelo implementado GPU.
+
+\section{Estudio de mercado}
+
+Existen en el mercado diversas empresas que se encargan de suministrar productos y servicios relacionados con la monitorización de trafico. 
+
+Como una de las lideres del sector se coloca FLIR que ofrece una gran variedad de productos, desde cámaras para la vigilancia de las carreteras, cámaras térmicas o mixtas y hardware de captación para el control de una pequeña zona. Ofrecen ademas dos \textit{suites} software, una de monitorización y obtención de datos y otra de gestión inteligente del transporte, para aplicaciones a gran escala.
+
+La compañía Cellint Traffic Solutions centra  sus servicios principalmente en aplicaciones de Smart City, dispone de productos para obtener datos sobre la situación del trafico de diversas maneras, cámaras, sistemas electromagnéticos y imágenes de vista de pájaro. 
+
+Kapsch Group ofrece pone a disposición de sus clientes diversas soluciones integrales de monitorización y control del trafico, sus sistemas de cámaras incorporan algoritmos de detección automática de peligros y anomalías. 
+
+TrafficVision ofrece un software de detección y contado de vehículos bastante sencillo que se podría implementar fácilmente es redes de vigilancia ya instaladas.
+
+\bibliography{egbib}
+
+\end{document}

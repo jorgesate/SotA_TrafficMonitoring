@@ -1,0 +1,88 @@
+\begin{thebibliography}{11}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[A.~Lai(1998)]{A.Lai:1998}
+N.~Yung A.~Lai.
+\newblock A fast and accurate scoreboard algorithm for estimating stationary
+  backgrounds in an image sequence.
+\newblock \emph{IEEE International Symposium on Circuits and Systems (ISCAS)},
+  pages 241--244, 1998.
+
+\bibitem[Bautista et~al.(2016)Bautista, Dy, Mañalac, Orbe, and
+  Cordel]{Bautista:16}
+C.~M. Bautista, C.~A. Dy, M.~I. Mañalac, R.~A. Orbe, and M.~Cordel.
+\newblock Convolutional neural network for vehicle detection in low resolution
+  traffic videos.
+\newblock In \emph{2016 IEEE Region 10 Symposium (TENSYMP)}, pages 277--281,
+  May 2016.
+\newblock \doi{10.1109/TENCONSpring.2016.7519418}.
+
+\bibitem[Datondji et~al.(2016)Datondji, Dupuis, Subirats, and Vasseur]{dato:16}
+Sokemi Rene~Emmanuel Datondji, Yohan Dupuis, Peggy Subirats, and Pascal
+  Vasseur.
+\newblock A survey of vision-based traffic monitoring of road intersections.
+\newblock \emph{IEEE}, 2016.
+
+\bibitem[Dong et~al.(2014)Dong, Pei, He, Liu, Dong, and Jia]{Dong:14}
+Zhen Dong, Mingtao Pei, Yang He, Ting Liu, Yanmei Dong, and Yunde Jia.
+\newblock Vehicle type classification using unsupervised convolutional neural
+  network.
+\newblock In \emph{Proceedings of the 2014 22Nd International Conference on
+  Pattern Recognition}, ICPR '14, pages 172--177, Washington, DC, USA, 2014.
+  IEEE Computer Society.
+\newblock ISBN 978-1-4799-5209-0.
+\newblock \doi{10.1109/ICPR.2014.39}.
+\newblock URL \url{http://dx.doi.org/10.1109/ICPR.2014.39}.
+
+\bibitem[Kachach()]{Thesis:16}
+Redouane Kachach.
+\newblock Monitorización visual automática de tráfico rodado.
+
+\bibitem[Seenouvong et~al.(2016)Seenouvong, Watchareeruetai, Nuthong,
+  Khongsomboon, and Ohnishi]{virtualdetection}
+N.~Seenouvong, U.~Watchareeruetai, C.~Nuthong, K.~Khongsomboon, and N.~Ohnishi.
+\newblock Vehicle detection and classification system based on virtual
+  detection zone.
+\newblock In \emph{2016 13th International Joint Conference on Computer Science
+  and Software Engineering (JCSSE)}, pages 1--5, July 2016.
+\newblock \doi{10.1109/JCSSE.2016.7748886}.
+
+\bibitem[Stauffer and Grimson(1999)]{Stauffer:99}
+Chris Stauffer and W.~Eric~L. Grimson.
+\newblock Adaptive background mixture models for real-time tracking.
+\newblock In \emph{CVPR}, pages 2246--2252. IEEE Computer Society, 1999.
+\newblock ISBN 0-7695-0149-4.
+\newblock URL
+  \url{http://dblp.uni-trier.de/db/conf/cvpr/cvpr1999.html#StaufferG99}.
+
+\bibitem[Stefano~Messelodi(2014)]{models}
+Michele~Zanin Stefano~Messelodi, Carla Maria~Modena.
+\newblock A computer vision system for the detection and classication of
+  vehicles at urban road intersections.
+\newblock Feb 2014.
+
+\bibitem[Xie et~al.(2016)Xie, Huttunen, Lin, Bhattacharyya, and
+  Takala]{CNNdetect:16}
+R.~Xie, H.~Huttunen, S.~Lin, S.~S. Bhattacharyya, and J.~Takala.
+\newblock Resource-constrained implementation and optimization of a deep neural
+  network for vehicle classification.
+\newblock In \emph{2016 24th European Signal Processing Conference (EUSIPCO)},
+  pages 1862--1866, Aug 2016.
+\newblock \doi{10.1109/EUSIPCO.2016.7760571}.
+
+\bibitem[Yao and Odobez(2007)]{yao:07}
+Jian Yao and Jean-Marc Odobez.
+\newblock Multi-layer background subtraction based on color and texture.
+\newblock In \emph{2007 IEEE Conference on Computer Vision and Pattern
+  Recognition}, pages 1--8. IEEE, 2007.
+
+\bibitem[Yuting~Huo(2015)]{CNNliu}
+Zeyu~Liu Yuting~Huo, Zhenjiang~Miao.
+\newblock A traffic object classification pipeline based on cnns.
+\newblock IEEE, Dec 2015.
+
+\end{thebibliography}
